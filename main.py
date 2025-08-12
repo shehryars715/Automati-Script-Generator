@@ -7,9 +7,29 @@ import os
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# 1. Initialize Gemini
+# 1. Initializing Gemini
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-pro",  # or "gemini-1.5-flash"
     temperature=0.7,
     google_api_key=GEMINI_API_KEY
 )
+
+# 2. First step: generate a title
+title_prompt = ChatPromptTemplate.from_template(
+    "Give me a catchy YouTube title about {topic}."
+)
+title_chain = title_prompt | llm | StrOutputParser()
+
+# 3. Second step: write a script based on the title
+script_prompt = ChatPromptTemplate.from_template(
+    "Write a 100-word YouTube video script for the title: {title}."
+)
+script_chain = script_prompt | llm
+
+chain = title_chain | script_chain
+
+topic = input("Enter a topic: ")
+
+script = chain.invoke({'topic':topic})
+
+print(script.content)
