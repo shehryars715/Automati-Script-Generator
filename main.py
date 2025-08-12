@@ -22,14 +22,16 @@ title_chain = title_prompt | llm | StrOutputParser()
 
 # 3. Second step: write a script based on the title
 script_prompt = ChatPromptTemplate.from_template(
-    "Write a 100-word YouTube video script for the title: {title}."
+    "Write a YouTube video script for the title: {title}."
 )
 script_chain = script_prompt | llm
 
 chain = title_chain | script_chain
 
-topic = input("Enter a topic: ")
+def generate_script(topic):
+    #Generating a YT script from topic
+    script = chain.invoke({'topic':topic})
+    return script.content
 
-script = chain.invoke({'topic':topic})
 
-print(script.content)
+
